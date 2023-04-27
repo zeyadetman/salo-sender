@@ -8,8 +8,11 @@ import {
   HomeHeaderTextContainerStyled,
 } from "@/modules/home";
 import { ActionModal } from "@/modules/common";
-import { useState } from "react";
+import { useEffect, useLayoutEffect, useState } from "react";
 import { LoginForm, Register } from "@/modules/auth";
+import { useRouter } from "next/router";
+import { useAppSelector } from "@/redux/store";
+import { userType } from "@/redux/slices/auth.slice";
 
 enum ModalTypes {
   LOGIN = "LOGIN",
@@ -18,6 +21,8 @@ enum ModalTypes {
 
 export default function Home() {
   const [modalType, selectModalType] = useState<ModalTypes | null>(null);
+  const router = useRouter();
+  const { accessToken, user } = useAppSelector((state) => state.auth);
 
   const handleTrySaloForFree = () => {
     selectModalType(ModalTypes.REGISTER);
@@ -30,6 +35,12 @@ export default function Home() {
   const handleModalClose = () => {
     selectModalType(null);
   };
+
+  useEffect(() => {
+    if (accessToken && user?.type === userType.SENDER) {
+      router.push("/dashboard");
+    }
+  }, [accessToken, user?.type]);
 
   return (
     <>

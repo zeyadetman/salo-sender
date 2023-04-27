@@ -1,12 +1,11 @@
+import { useAppSelector } from "@/redux/store";
 import { Button, Container, Typography } from "@mui/material";
 import { Box } from "@mui/system";
 import Image from "next/image";
 import React, { useState } from "react";
 
-interface Props {}
-
-function User(props: Props) {
-  const {} = props;
+function User() {
+  const user = useAppSelector((state) => state?.auth?.user);
   const [parcels, setParcels] = useState([1]); // TODO: Replace it with real data from the server & Redux
   const isParcelsEmpty = !parcels || parcels.length === 0;
 
@@ -74,7 +73,7 @@ function User(props: Props) {
         gap: "2rem",
       }}
     >
-      <Typography variant="h3">Hi Folan,</Typography>
+      <Typography variant="h3">Hi {user?.name},</Typography>
 
       <Box>
         <Box

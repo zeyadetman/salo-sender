@@ -22,8 +22,15 @@ import {
   useLoginMutation,
 } from "@/redux/services/auth.service";
 import { useAppDispatch } from "@/redux/store";
-import { setToken, setUser, User, userType } from "@/redux/slices/auth.slice";
+import {
+  logout,
+  setToken,
+  setUser,
+  User,
+  userType,
+} from "@/redux/slices/auth.slice";
 import { useRouter } from "next/router";
+import { useSnackbar } from "notistack";
 
 export interface ILoginForm {
   email: string;
@@ -33,19 +40,34 @@ export interface ILoginForm {
 export const LoginForm = () => {
   const theme = useTheme();
   const router = useRouter();
+  const { enqueueSnackbar } = useSnackbar();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
   const dispatch = useAppDispatch();
   const [login, { isLoading: isSubmitting }] = useLoginMutation();
   const [getMeInfo] = getMeApi.useLazyQuery();
 
   const handleLogin = async (values: ILoginForm) => {
-    const accessToken: { accessToken: string } = await login(values).unwrap();
-    dispatch(setToken(accessToken));
-    const user: any = await getMeInfo();
-    const isUserSender = user.data?.type === userType.SENDER;
-    if (isUserSender) {
-      dispatch(setUser({ user: user.data }));
-      // router.push("/dashboard");
+    try {
+      const accessToken: { accessToken: string } = await login(values).unwrap();
+      dispatch(setToken(accessToken));
+      const user: any = await getMeInfo();
+      const isUserSender = user.data?.type === userType.SENDER;
+      if (isUserSender) {
+        dispatch(setUser({ user: user.data }));
+        enqueueSnackbar(`Welcome Back, ${user.data?.name}`, {
+          variant: "success",
+        });
+        router.push("/dashboard");
+      } else {
+        dispatch(logout());
+        enqueueSnackbar("You are not a sender!", {
+          variant: "error",
+        });
+      }
+    } catch (err) {
+      enqueueSnackbar((err as any).data.message || "Something went Wrong!", {
+        variant: "error",
+      });
     }
   };
 

@@ -24,9 +24,11 @@
     "lottie-react": "^2.4.0",
     "mui-minimal-theme": "github:zeyadetman/minimal-mui-theme",
     "next": "13.3.1",
+    "notistack": "^3.0.1",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-redux": "^8.0.5",
+    "redux-persist": "^6.0.0",
     "typescript": "5.0.4"
   }
 }
