@@ -66,54 +66,44 @@ function User(props: Props) {
   };
 
   return (
-    <Container
+    <Box
       sx={{
-        minHeight: "90vh",
         display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
+        flexDirection: "column",
         width: "100%",
+        gap: "2rem",
       }}
     >
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          width: "100%",
-          gap: "2rem",
-        }}
-      >
-        <Typography variant="h3">Hi Folan,</Typography>
+      <Typography variant="h3">Hi Folan,</Typography>
 
-        <Box>
-          <Box
-            sx={{
-              display: "flex",
-              alignItems: "flex-end",
-              justifyContent: "flex-start",
-              gap: "1rem",
-            }}
-          >
-            <Typography variant="h4">Your Parcels</Typography>
-            {!isParcelsEmpty ? (
-              <Typography
-                variant="overline"
-                sx={{
-                  textDecoration: "underline",
-                  ":hover": {
-                    cursor: "pointer",
-                  },
-                }}
-              >
-                Create a new Parcel
-              </Typography>
-            ) : null}
-          </Box>
-
-          {renderParcels()}
+      <Box>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "flex-end",
+            justifyContent: "flex-start",
+            gap: "1rem",
+          }}
+        >
+          <Typography variant="h4">Your Parcels</Typography>
+          {!isParcelsEmpty ? (
+            <Typography
+              variant="overline"
+              sx={{
+                textDecoration: "underline",
+                ":hover": {
+                  cursor: "pointer",
+                },
+              }}
+            >
+              Create a new Parcel
+            </Typography>
+          ) : null}
         </Box>
+
+        {renderParcels()}
       </Box>
-    </Container>
+    </Box>
   );
 }
 

@@ -1,11 +1,36 @@
 import Head from "next/head";
-import { Inter } from "next/font/google";
-import styles from "@/styles/Home.module.css";
-import { Box, Button, Container, Typography } from "@mui/material";
+import { Button, Typography } from "@mui/material";
 import Lottie from "lottie-react";
 import animationData from "@/assets/lottie-banner.json";
+import {
+  HomeActionButtonsContainerStyled,
+  HomeContainerStyled,
+  HomeHeaderTextContainerStyled,
+} from "@/modules/home";
+import { ActionModal } from "@/modules/common";
+import { useState } from "react";
+import { LoginForm, Register } from "@/modules/auth";
+
+enum ModalTypes {
+  LOGIN = "LOGIN",
+  REGISTER = "REGISTER",
+}
 
 export default function Home() {
+  const [modalType, selectModalType] = useState<ModalTypes | null>(null);
+
+  const handleTrySaloForFree = () => {
+    selectModalType(ModalTypes.REGISTER);
+  };
+
+  const handleLogin = () => {
+    selectModalType(ModalTypes.LOGIN);
+  };
+
+  const handleModalClose = () => {
+    selectModalType(null);
+  };
+
   return (
     <>
       <Head>
@@ -14,81 +39,51 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Container
-        sx={{
-          width: "100%",
-          minHeight: "90vh",
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center",
-        }}
-      >
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            flexDirection: "column",
-            gap: "6rem",
-          }}
-        >
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "1rem",
-            }}
-          >
-            <Typography
-              variant="h3"
-              sx={{
-                textAlign: "center",
-              }}
-            >
-              Salo, Fast & Safe Parcels Delivery
-            </Typography>
-            <Typography
-              variant="subtitle1"
-              sx={{
-                textAlign: "center",
-              }}
-            >
-              We care about your parcels, we deliver them fast and safe.
-            </Typography>
-          </Box>
-          <Lottie animationData={animationData} loop={true} />
-          <Box
-            sx={{
-              display: "flex",
-              gap: "2rem",
-              flexWrap: "wrap",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Button
-              variant="contained"
-              color="primary"
-              sx={{
-                fontSize: "1rem",
-              }}
-            >
-              Try Salo for free
-            </Button>
 
-            <Button
-              variant="text"
-              color="primary"
-              sx={{
-                fontSize: "1rem",
-                textTransform: "none",
-              }}
-            >
-              Have an account? Login
-            </Button>
-          </Box>
-        </Box>
-      </Container>
+      <HomeContainerStyled>
+        <HomeHeaderTextContainerStyled>
+          <Typography variant="h3">
+            Salo, Fast & Safe Parcels Delivery
+          </Typography>
+          <Typography variant="subtitle1">
+            We care about your parcels, we deliver them fast and safe.
+          </Typography>
+        </HomeHeaderTextContainerStyled>
+
+        <Lottie animationData={animationData} loop={true} />
+
+        <HomeActionButtonsContainerStyled>
+          <ActionModal
+            actionButton={
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleTrySaloForFree}
+              >
+                Try Salo for free
+              </Button>
+            }
+            modalProps={{
+              open: modalType === ModalTypes.REGISTER,
+              onClose: handleModalClose,
+              children: <Register />,
+            }}
+          />
+
+          <ActionModal
+            actionButton={
+              <Button variant="text" color="primary" onClick={handleLogin}>
+                Have an account? Login
+              </Button>
+            }
+            modalProps={{
+              open: modalType === ModalTypes.LOGIN ? true : false,
+              onClose: handleModalClose,
+              children: <LoginForm />,
+            }}
+          />
+        </HomeActionButtonsContainerStyled>
+      </HomeContainerStyled>
     </>
   );
 }
