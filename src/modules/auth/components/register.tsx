@@ -120,7 +120,7 @@ export const Register = ({
               <Field
                 component={TextField}
                 name="name"
-                type="name"
+                type="text"
                 label="Name"
                 disabled={isSubmitting}
               />

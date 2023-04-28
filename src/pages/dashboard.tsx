@@ -1,13 +1,19 @@
+import { ActionDrawer } from "@/modules/common";
+import {
+  DashboardContainerStyled,
+  EmptyParcelsContainerStyled,
+  NewParcel,
+  ParcelsListContainerStyled,
+} from "@/modules/dashboard";
 import { logout } from "@/redux/slices/auth.slice";
-import { useAppDispatch, useAppSelector } from "@/redux/store";
-import { Button, Container, Typography } from "@mui/material";
-import { Box } from "@mui/system";
+import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
+import { Button, Typography, Box } from "@mui/material";
 import Head from "next/head";
 import Image from "next/image";
 import React, { useState } from "react";
 
 function User() {
-  const user = useAppSelector((state) => state?.auth?.user);
+  const user = useAppSelector((state: RootState) => state?.auth?.user);
   const dispatch = useAppDispatch();
   const handleLogout = () => {
     dispatch(logout());
@@ -15,48 +21,38 @@ function User() {
   const [parcels, setParcels] = useState([1]); // TODO: Replace it with real data from the server & Redux
   const isParcelsEmpty = !parcels || parcels.length === 0;
 
+  const [isDrawerOpen, setDrawerOpen] = useState(false);
+  const toggleDrawer =
+    (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+      if (
+        event &&
+        event.type === "keydown" &&
+        ((event as React.KeyboardEvent).key === "Tab" ||
+          (event as React.KeyboardEvent).key === "Shift")
+      ) {
+        return;
+      }
+
+      setDrawerOpen(open);
+    };
+
   const renderParcels = () => {
     if (isParcelsEmpty) {
       return (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            flexDirection: "column",
-            gap: "2rem",
-            width: "100%",
-            marginTop: "3rem",
-          }}
-        >
+        <EmptyParcelsContainerStyled>
           <Image
             src="/assets/empty-parcels.svg"
             alt="Empty"
             width="600"
             height="300"
           />
-          <Box
-            sx={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "1rem",
-              alignItems: "center",
-              justifyContent: "center",
-            }}
-          >
-            <Typography
-              variant="body1"
-              sx={{
-                color: "gray",
-              }}
-            >
+          <Box className="emptyStateText">
+            <Typography variant="body1">
               You don&apos;t have any parcels yet.
             </Typography>
-            <Button>
-              <Typography variant="button">Create a new Parcel</Typography>
-            </Button>
+            <Button onClick={toggleDrawer(true)}>Create a new Parcel</Button>
           </Box>
-        </Box>
+        </EmptyParcelsContainerStyled>
       );
     }
 
@@ -79,25 +75,11 @@ function User() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Box>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            width: "100%",
-            gap: "2rem",
-          }}
-        >
+        <DashboardContainerStyled>
           <Typography variant="h3">Hi {user?.name},</Typography>
 
           <Box>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "flex-end",
-                justifyContent: "flex-start",
-                gap: "1rem",
-              }}
-            >
+            <ParcelsListContainerStyled>
               <Typography variant="h4">Your Parcels</Typography>
               {!isParcelsEmpty ? (
                 <Typography
@@ -108,18 +90,21 @@ function User() {
                       cursor: "pointer",
                     },
                   }}
+                  onClick={toggleDrawer(true)}
                 >
                   Create a new Parcel
                 </Typography>
               ) : null}
-            </Box>
+            </ParcelsListContainerStyled>
 
             {renderParcels()}
           </Box>
-        </Box>
-
-        <Button onClick={handleLogout}>Logout</Button>
+        </DashboardContainerStyled>
       </Box>
+      <ActionDrawer open={isDrawerOpen} toggleDrawer={toggleDrawer}>
+        <NewParcel />
+      </ActionDrawer>
+      <Button onClick={handleLogout}>Logout</Button>
     </>
   );
 }
