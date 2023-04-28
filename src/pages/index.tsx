@@ -40,6 +40,7 @@ export default function Home() {
     if (accessToken && user?.type === userType.SENDER) {
       router.push("/dashboard");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [accessToken, user?.type]);
 
   return (
@@ -77,7 +78,7 @@ export default function Home() {
             modalProps={{
               open: modalType === ModalTypes.REGISTER,
               onClose: handleModalClose,
-              children: <Register />,
+              children: <Register handleLoginNavigation={handleLogin} />,
             }}
           />
 

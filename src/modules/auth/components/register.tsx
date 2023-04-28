@@ -1,8 +1,6 @@
 import {
-  Box,
   Button,
   LinearProgress,
-  styled,
   Typography,
   useMediaQuery,
 } from "@mui/material";
@@ -10,23 +8,63 @@ import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-mui";
 import Lottie from "lottie-react";
 import animationData from "@/assets/lottie-register.json";
+import successAnimationData from "@/assets/lottie-registeration-success.json";
 import { useTheme } from "@mui/material/styles";
 import React from "react";
 import {
   FormContainerStyled,
   FormOverviewContainerStyled,
   FormStyled,
+  SuccessfulRegisterationMessageStyled,
 } from "@/modules/auth/styles";
+import { useRegisterMutation } from "@/redux/services/auth.service";
+import { useSnackbar } from "notistack";
 
-interface IRegisterationForm {
+export interface IRegisterationForm {
   email: string;
   name: string;
   password: string;
 }
 
-export const Register = () => {
+export const Register = ({
+  handleLoginNavigation,
+}: {
+  handleLoginNavigation: () => void;
+}) => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("md"));
+  const { enqueueSnackbar } = useSnackbar();
+  const [register, { isLoading: isSubmitting, isSuccess }] =
+    useRegisterMutation();
+
+  const handleRegister = async (values: IRegisterationForm) => {
+    try {
+      register(values);
+    } catch (err) {
+      enqueueSnackbar((err as any).data.message || "Something went Wrong!", {
+        variant: "error",
+      });
+    }
+  };
+
+  if (isSuccess) {
+    return (
+      <SuccessfulRegisterationMessageStyled>
+        <Lottie
+          animationData={successAnimationData}
+          loop={false}
+          style={{
+            maxWidth: "400px",
+            height: "auto",
+            margin: "0 auto",
+          }}
+        />
+        <Button variant="contained" onClick={handleLoginNavigation}>
+          Click here to login
+        </Button>
+      </SuccessfulRegisterationMessageStyled>
+    );
+  }
 
   return (
     <Formik
@@ -54,14 +92,11 @@ export const Register = () => {
         }
         return errors;
       }}
-      onSubmit={(values, { setSubmitting }) => {
-        setTimeout(() => {
-          setSubmitting(false);
-          alert(JSON.stringify(values, null, 2));
-        }, 500);
+      onSubmit={(values: IRegisterationForm) => {
+        handleRegister(values);
       }}
     >
-      {({ submitForm, isSubmitting }) => (
+      {({ submitForm }) => (
         <Form>
           <FormContainerStyled>
             <FormOverviewContainerStyled>
@@ -87,18 +122,21 @@ export const Register = () => {
                 name="name"
                 type="name"
                 label="Name"
+                disabled={isSubmitting}
               />
               <Field
                 component={TextField}
                 name="email"
                 type="email"
                 label="Email"
+                disabled={isSubmitting}
               />
               <Field
                 component={TextField}
                 type="password"
                 label="Password"
                 name="password"
+                disabled={isSubmitting}
               />
               {isSubmitting && <LinearProgress />}
               <Button

@@ -1,4 +1,5 @@
-import { ILoginForm } from "@/modules/auth";
+import { ILoginForm, IRegisterationForm } from "@/modules/auth";
+import { userType } from "@/redux/slices/auth.slice";
 import { RootState } from "@/redux/store";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
@@ -22,10 +23,13 @@ export const authApi = createApi({
       query: () => "users/me",
     }),
     register: builder.mutation({
-      query: (registerationForm) => ({
+      query: (registerationForm: IRegisterationForm) => ({
         url: `users`,
         method: "POST",
-        body: JSON.stringify({ registerationForm }),
+        body: JSON.stringify({
+          ...registerationForm,
+          type: userType.SENDER,
+        }),
       }),
     }),
     login: builder.mutation({

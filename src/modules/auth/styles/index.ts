@@ -30,3 +30,10 @@ export const FormStyled = styled(Box)`
   width: 100%;
   gap: 1rem;
 `;
+
+export const SuccessfulRegisterationMessageStyled = styled(Box)`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+`;
