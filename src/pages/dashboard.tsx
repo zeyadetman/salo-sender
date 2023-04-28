@@ -1,24 +1,28 @@
-import { ActionDrawer } from "@/modules/common";
+import { ActionDrawer, DataTable } from "@/modules/common";
 import {
   DashboardContainerStyled,
   EmptyParcelsContainerStyled,
   NewParcel,
   ParcelsListContainerStyled,
 } from "@/modules/dashboard";
-import { logout } from "@/redux/slices/auth.slice";
+import { useGetAllParcelsQuery } from "@/redux/services/parcel.sercice";
+import { logout, setParcels } from "@/redux/slices/auth.slice";
 import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
 import { Button, Typography, Box } from "@mui/material";
 import Head from "next/head";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 function User() {
   const user = useAppSelector((state: RootState) => state?.auth?.user);
+  const { data } = useGetAllParcelsQuery({} as unknown as void, {
+    refetchOnMountOrArgChange: true,
+  });
   const dispatch = useAppDispatch();
   const handleLogout = () => {
     dispatch(logout());
   };
-  const [parcels, setParcels] = useState([1]); // TODO: Replace it with real data from the server & Redux
+  const parcels = user?.parcels;
   const isParcelsEmpty = !parcels || parcels.length === 0;
 
   const [isDrawerOpen, setDrawerOpen] = useState(false);
@@ -35,6 +39,14 @@ function User() {
 
       setDrawerOpen(open);
     };
+
+  useEffect(() => {
+    console.log("data", { data });
+    if (data) {
+      dispatch(setParcels({ parcels: [...(data || [])] }));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   const renderParcels = () => {
     if (isParcelsEmpty) {
@@ -56,14 +68,7 @@ function User() {
       );
     }
 
-    return (
-      <Box component="ul">
-        <Box component="li">Your Orders</Box>
-        <Box component="li">Your Orders</Box>
-        <Box component="li">Your Orders</Box>
-        <Box component="li">Your Orders</Box>
-      </Box>
-    );
+    return <DataTable rows={parcels} headers={["id", "name"]} />;
   };
 
   return (
@@ -74,37 +79,36 @@ function User() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Box>
-        <DashboardContainerStyled>
-          <Typography variant="h3">Hi {user?.name},</Typography>
 
-          <Box>
-            <ParcelsListContainerStyled>
-              <Typography variant="h4">Your Parcels</Typography>
-              {!isParcelsEmpty ? (
-                <Typography
-                  variant="overline"
-                  sx={{
-                    textDecoration: "underline",
-                    ":hover": {
-                      cursor: "pointer",
-                    },
-                  }}
-                  onClick={toggleDrawer(true)}
-                >
-                  Create a new Parcel
-                </Typography>
-              ) : null}
-            </ParcelsListContainerStyled>
+      <DashboardContainerStyled>
+        <Typography variant="h3">Hi {user?.name},</Typography>
 
-            {renderParcels()}
-          </Box>
-        </DashboardContainerStyled>
-      </Box>
+        <Box>
+          <ParcelsListContainerStyled>
+            <Typography variant="h4">Your Parcels</Typography>
+            {!isParcelsEmpty ? (
+              <Typography
+                variant="overline"
+                sx={{
+                  textDecoration: "underline",
+                  ":hover": {
+                    cursor: "pointer",
+                  },
+                }}
+                onClick={toggleDrawer(true)}
+              >
+                Create a new Parcel
+              </Typography>
+            ) : null}
+          </ParcelsListContainerStyled>
+
+          {renderParcels()}
+        </Box>
+        <Button onClick={handleLogout}>Logout</Button>
+      </DashboardContainerStyled>
       <ActionDrawer open={isDrawerOpen} toggleDrawer={toggleDrawer}>
         <NewParcel />
       </ActionDrawer>
-      <Button onClick={handleLogout}>Logout</Button>
     </>
   );
 }

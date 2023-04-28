@@ -6,11 +6,17 @@ export enum userType {
   BIKER = "BIKER",
 }
 
+export interface IUserParcel {
+  id: string;
+  name: string;
+}
+
 export interface User {
   id: number;
   name: string;
   email: string;
   type: userType;
+  parcels: IUserParcel[];
 }
 
 type AuthState = {
@@ -35,8 +41,14 @@ const slice = createSlice({
       state.user = null;
       state.accessToken = null;
     },
+    setParcels: (
+      state,
+      { payload: { parcels } }: PayloadAction<{ parcels: IUserParcel[] }>
+    ) => {
+      state.user!.parcels = parcels;
+    },
   },
 });
 
-export const { setToken, setUser, logout } = slice.actions;
+export const { setToken, setUser, logout, setParcels } = slice.actions;
 export default slice.reducer;

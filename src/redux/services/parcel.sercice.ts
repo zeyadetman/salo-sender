@@ -19,9 +19,20 @@ export const parcelApi = createApi({
       return headers;
     },
   }),
+  tagTypes: ["Parcels"],
   endpoints: (builder) => ({
     getAllParcels: builder.query<void, void>({
       query: () => "parcels",
+      providesTags: (result: any) =>
+        result
+          ? [
+              ...result.map(({ id }: { id: string }) => ({
+                type: "Parcels" as const,
+                id,
+              })),
+              { type: "Parcels", id: "LIST" },
+            ]
+          : [{ type: "Parcels", id: "LIST" }],
     }),
     createParcel: builder.mutation({
       query: (parcelForm: IParcel) => ({
@@ -29,9 +40,10 @@ export const parcelApi = createApi({
         method: "POST",
         body: JSON.stringify(parcelForm),
       }),
+      invalidatesTags: [{ type: "Parcels", id: "LIST" }],
     }),
   }),
 });
 
-export const { useCreateParcelMutation } = parcelApi;
+export const { useCreateParcelMutation, useGetAllParcelsQuery } = parcelApi;
 export const {} = parcelApi.endpoints;
