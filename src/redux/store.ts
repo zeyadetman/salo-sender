@@ -5,7 +5,7 @@ import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 import authReducer from "@/redux/slices/auth.slice";
 import storage from "redux-persist/lib/storage";
 import { persistReducer } from "redux-persist";
-import { parcelApi } from "@/redux/services/parcel.sercice";
+import { parcelApi } from "@/redux/services/parcel.service";
 
 const persistConfig = {
   key: "root",

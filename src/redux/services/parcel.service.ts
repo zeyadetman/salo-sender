@@ -7,7 +7,7 @@ import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 export const parcelApi = createApi({
   reducerPath: "parcelApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: "http://localhost:3000/",
+    baseUrl: process.env.NEXT_PUBLIC_API_URL || "",
     headers: {
       "Content-Type": "application/json",
     },
@@ -46,4 +46,4 @@ export const parcelApi = createApi({
 });
 
 export const { useCreateParcelMutation, useGetAllParcelsQuery } = parcelApi;
-export const {} = parcelApi.endpoints;
+export const { getAllParcels } = parcelApi.endpoints;

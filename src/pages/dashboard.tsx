@@ -5,7 +5,7 @@ import {
   NewParcel,
   ParcelsListContainerStyled,
 } from "@/modules/dashboard";
-import { useGetAllParcelsQuery } from "@/redux/services/parcel.sercice";
+import { useGetAllParcelsQuery } from "@/redux/services/parcel.service";
 import { logout, setParcels } from "@/redux/slices/auth.slice";
 import { RootState, useAppDispatch, useAppSelector } from "@/redux/store";
 import { Button, Typography, Box } from "@mui/material";
@@ -41,7 +41,6 @@ function User() {
     };
 
   useEffect(() => {
-    console.log("data", { data });
     if (data) {
       dispatch(setParcels({ parcels: [...(data || [])] }));
     }
@@ -68,7 +67,7 @@ function User() {
       );
     }
 
-    return <DataTable rows={parcels} headers={["id", "name"]} />;
+    return <DataTable rows={parcels} />;
   };
 
   return (

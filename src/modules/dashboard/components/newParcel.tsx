@@ -1,5 +1,5 @@
 import { FormStyled } from "@/modules/auth/styles";
-import { useCreateParcelMutation } from "@/redux/services/parcel.sercice";
+import { useCreateParcelMutation } from "@/redux/services/parcel.service";
 import { Box, Button, LinearProgress, Typography } from "@mui/material";
 import { Field, Form, Formik } from "formik";
 import { TextField } from "formik-mui";
@@ -22,11 +22,17 @@ export const NewParcel = () => {
 
   const handleCreateParcel = async (values: IParcel) => {
     try {
-      await createParcel(values);
-    } catch (err) {
-      enqueueSnackbar((err as any).data.message || "Something went Wrong!", {
-        variant: "error",
-      });
+      const { error } = await createParcel(values).unwrap();
+      if (error) {
+        throw error;
+      }
+    } catch (err: any) {
+      enqueueSnackbar(
+        err?.message || err?.data?.message || "Something went Wrong!",
+        {
+          variant: "error",
+        }
+      );
     }
   };
 

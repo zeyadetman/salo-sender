@@ -39,11 +39,17 @@ export const Register = ({
 
   const handleRegister = async (values: IRegisterationForm) => {
     try {
-      register(values);
-    } catch (err) {
-      enqueueSnackbar((err as any).data.message || "Something went Wrong!", {
-        variant: "error",
-      });
+      const { error } = await register(values).unwrap();
+      if (error) {
+        throw error;
+      }
+    } catch (err: any) {
+      enqueueSnackbar(
+        err?.message || err?.data?.message || "Something went Wrong!",
+        {
+          variant: "error",
+        }
+      );
     }
   };
 

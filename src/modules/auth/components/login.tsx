@@ -64,10 +64,13 @@ export const LoginForm = () => {
           variant: "error",
         });
       }
-    } catch (err) {
-      enqueueSnackbar((err as any).data.message || "Something went Wrong!", {
-        variant: "error",
-      });
+    } catch (err: any) {
+      enqueueSnackbar(
+        err?.message || err?.data?.message || "Something went Wrong!",
+        {
+          variant: "error",
+        }
+      );
     }
   };
 
