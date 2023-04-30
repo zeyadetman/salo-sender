@@ -50,7 +50,10 @@ export const LoginForm = () => {
     try {
       const accessToken: { accessToken: string } = await login(values).unwrap();
       dispatch(setToken(accessToken));
-      const user: any = await getMeInfo();
+      const user: any = await getMeInfo().unwrap();
+      if (user?.error) {
+        throw user?.error;
+      }
       const isUserSender = user.data?.type === userType.SENDER;
       if (isUserSender) {
         dispatch(setUser({ user: user.data }));
