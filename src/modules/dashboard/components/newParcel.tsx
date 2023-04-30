@@ -22,7 +22,7 @@ export const NewParcel = () => {
 
   const handleCreateParcel = async (values: IParcel) => {
     try {
-      const { error } = await createParcel(values).unwrap();
+      const { error } = (await createParcel(values)) as any;
       if (error) {
         throw error;
       }
