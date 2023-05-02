@@ -25,6 +25,7 @@ export const ActionDrawer = (props: Props) => {
         sx={{
           "& .MuiPaper-elevation": {
             width: "50%",
+            minWidth: "280px",
           },
         }}
         {...drawerProps}
